@@ -41,7 +41,6 @@ public class BoardControllerTests {
 					.getModelMap());
 	}
 	
-	@Test
 	public void testRegister() throws Exception {
 		String resultPage = mockMvc.perform(MockMvcRequestBuilders.post("/board/register")
 																		.param("title", "테스트 새글 제목")
@@ -49,6 +48,13 @@ public class BoardControllerTests {
 																		.param("writer", "user00")
 																	).andReturn().getModelAndView().getViewName();
 		log.info(resultPage);
+	}
+	
+	@Test
+	public void testGet() throws Exception {
+		log.info(mockMvc.perform(MockMvcRequestBuilders.get("/board/get")
+															.param("bno", "5")
+														).andReturn().getModelAndView().getModelMap());
 	}
 	
 }
