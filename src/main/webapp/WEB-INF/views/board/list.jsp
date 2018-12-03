@@ -32,7 +32,7 @@
             					<c:forEach items="${list }" var="board">
             						<tr>
             							<td><c:out value="${board.bno }"/></td>
-            							<td><c:out value="${board.title }"/></td>
+            							<td><a href="/board/get?bno=<c:out value='${board.bno }'/>"><c:out value="${board.title }"/></a></td>
             							<td><c:out value="${board.writer }"/></td>
             							<td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate }"/></td>
             							<td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.updateDate }"/></td>
@@ -63,7 +63,8 @@
 <script>
 $(function() {
 	function checkModal(result) {
-		if (result === "") {
+		// 현재 페이지의 history에 obj가 있을시 리턴
+		if (result === "" || history.state) {
 			return;
 		}
 		
@@ -77,6 +78,9 @@ $(function() {
 	const result = "<c:out value='${result}' />";	
 	
 	checkModal(result);
+	
+	// 현재 페이지의 history에 obj 추가
+	history.replaceState({}, null, null);
 	
 	$("#regBtn").on("click", function() {
 		self.location = "/board/register";
