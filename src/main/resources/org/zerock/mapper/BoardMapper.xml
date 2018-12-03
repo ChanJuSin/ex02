@@ -29,4 +29,8 @@
 		SELECT * FROM TBL_BOARD WHERE BNO = #{bno}
 	</select>
 	
+	<delete id="delete">
+		DELETE TBL_BOARD WHERE BNO = #{bno}
+	</delete>
+	
 </mapper>
