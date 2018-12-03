@@ -25,4 +25,8 @@
 		VALUES (#{bno}, #{title}, #{content}, #{writer})
 	</insert>
 	
+	<select id="read" resultType="org.zerock.domain.BoardVO">
+		SELECT * FROM TBL_BOARD WHERE BNO = #{bno}
+	</select>
+	
 </mapper>
