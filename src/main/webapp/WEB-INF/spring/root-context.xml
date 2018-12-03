@@ -11,8 +11,8 @@
 	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
 		<property name="jdbcUrl" value="jdbc:log4jdbc:oracle:thin:@localhost:1521:XE" />
-		<property name="username" value="" />
-		<property name="password" value="" />
+		<property name="username" value="book_ex" />
+		<property name="password" value="ab205312" />
 	</bean>
 	
 	<!-- HikariCP DataSource 세팅 -->
