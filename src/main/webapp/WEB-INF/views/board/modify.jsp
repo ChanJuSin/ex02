@@ -46,6 +46,15 @@
 	            					<input type="text" class="form-control" name="regDate" value="<fmt:formatDate pattern="yyyy/MM/dd" value='${board.updateDate }' />" readonly >
 	            				</div>
 	            				
+	      						<!-- 
+	      							pageNum과 amount는 페이징 처리를 한뒤에 
+									3페이지에서 게시글을 조회후 게시글 수정페이지에서 다시 목록페이지로 이동할때 전에 보던 3페이지를 
+									다시 보여주기 위해서 필요하다.
+									또한 수정, 삭제후에도 전에보던 3페이지를 보여주기 위해서 필요하다.
+	      						 -->
+	            				<input type="hidden" name="pageNum" value="<c:out value='${cri.pageNum }'/>">
+	            				<input type="hidden" name="amount" value="<c:out value='${cri.amount }'/>">
+	            				
 	            				<button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
 	            				<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
 	            				<button type="submit" data-oper="list" class="btn btn-info">List</button>
@@ -68,9 +77,19 @@ $(function() {
 		
 		if (operation === "remove") {
 			formObj.attr("action", "/board/remove");
-		} else if (operation === "list") {
+		} else if (operation === "list") { 
+			// 게시물 목록 이동
 			formObj.attr("action", "/board/list").attr("method", "get");
+			
+			// 게시물 목록 이동시 필요한 페이지 데이터 태그 복사
+			const pageNumTag = $("input[name='pageNum']").clone();
+			const amountTag = $("input[name='amount']").clone();
+			
+			// 태그의 내용을 지운다. 요소 태그는 남아있음
 			formObj.empty();
+			// 페이지 데이터 태그 추가
+			formObj.append(pageNumTag);
+			formObj.append(amountTag);
 		} 
 		
 		formObj.submit();

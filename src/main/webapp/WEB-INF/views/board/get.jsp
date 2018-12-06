@@ -40,6 +40,13 @@
 							
 							<form id="operForm" action="/board/modify" method="get">
 								<input type="hidden" id="bno" name="bno" value="<c:out value='${board.bno}'/>">
+								<!-- 
+									pageNum과 amount는 페이징 처리를 한뒤에 
+									3페이지에서 게시글을 조회후 목록페이지로 이동할때 전에 보던 3페이지를 
+									다시 보여주기 위해서 필요하다.
+								 -->
+								<input type="hidden" name="pageNum" value="<c:out value='${cri.pageNum }'/>">
+								<input type="hidden" name="amount" value="<c:out value='${cri.amount }'/>">
 							</form>
             			</div>
             		</div>

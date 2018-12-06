@@ -32,13 +32,40 @@
             					<c:forEach items="${list }" var="board">
             						<tr>
             							<td><c:out value="${board.bno }"/></td>
-            							<td><a href="/board/get?bno=<c:out value='${board.bno }'/>"><c:out value="${board.title }"/></a></td>
+            							<td><a class="move" href="<c:out value='${board.bno }'/>"><c:out value="${board.title }"/></a></td>
             							<td><c:out value="${board.writer }"/></td>
             							<td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate }"/></td>
             							<td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.updateDate }"/></td>
             						</tr>
             					</c:forEach>
             				</table>
+            				
+            				<div class="pull-right">
+            					<ul class="pagination">
+            						<c:if test="${pageMaker.prev }">
+            							<li class="paginate_button previous">
+            								<a href="<c:out value='${pageMaker.startPage - 1 }' />">Previous</a>
+            							</li>
+            						</c:if>
+            						
+            						<c:forEach begin="${pageMaker.startPage }" end="${pageMaker.endPage }" var="num">
+            							<li class="paginate_button <c:out value='${pageMaker.cri.pageNum == num ? "active" : "" }' />">
+            								<a href="<c:out value='${num }'/>">${num }</a>
+            							</li>
+            						</c:forEach>
+            						
+            						<c:if test="${pageMaker.next }">
+            							<li class="paginate_button next">
+            								<a href="<c:out value='${pageMaker.endPage + 1 }' />">Next</a>
+            							</li>
+            						</c:if>
+            						
+            						<form id="actionForm" action="/board/list" method="get">
+            							<input type="hidden" name="pageNum" value="<c:out value='${pageMaker.cri.pageNum }'/>">
+            							<input type="hidden" name="amount" value="<c:out value='${pageMaker.cri.amount }' />">
+            						</form>
+            					</ul>
+            				</div>
             				
             				<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-lebelledby="myModalLabel" aria-hidden="true">
             					<div class="modal-dialog">
@@ -84,6 +111,29 @@ $(function() {
 	
 	$("#regBtn").on("click", function() {
 		self.location = "/board/register";
+	});
+	
+	const actionForm = $("#actionForm");
+	
+	// 페이징 처리된 버튼 클릭시 해당 페이지의 목록을 가지고옴
+	$(".paginate_button a").on("click", function(e) {
+		e.preventDefault();
+		
+		console.log("click");
+		
+		actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+		actionForm.submit();
+	});
+	
+	// 페이징 처리후 게시물 조회하고 목록페이지 이동시 전에 보던 페이지번호의 정보가 보이게 처리함
+	$(".move").on("click", function(e) {
+		e.preventDefault();
+		const bno = $(this).attr("href");
+		// hidden태그에 게시물 번호 세팅
+		actionForm.append("<input type='hidden' name='bno' value='"+bno+"' />");
+		// actionForm 이동 경로를 조회페이지로 세팅
+		actionForm.attr("action", "/board/get");
+		actionForm.submit();
 	});
 });          
 </script>
