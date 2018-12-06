@@ -11,6 +11,42 @@
 		]]>
 	</select>
 	
+	<!-- 
+		검색처리 조건
+		(" suffix=") 이부분은 안쪽 foreach에서 생성되는 쿼리 부분인거 같다.
+		안쪽 쿼리에서 foreach가 돌면서  
+		OR TITLE LIKE '%' || #{keyword} || '%'
+		OR CONTENT LIKE '%' || #{keyword} || '%'
+		OR WRITER LIKE '%' || #{keyword} || '%'
+		위와 같은 쿼리가 만들어지면 가장 첫번째 trim에 
+		prefixOverrides="OR" 이 부분에 의해서 OR로 시작되는 첫번째 쿼리인 
+		OR TITLE LIKE '%' || #{keyword} || '%' 부분이 
+		TITLE LIKE '%' || #{keyword} || '%' 로 변경된다.
+		결론적으로 typeArr이 TCW인 경우 만들어지는 쿼리는 
+		TITLE LIKE '%test%'
+   		OR CONTENT LIKE '%test%'
+     	OR WRITER LIKE '%test%' 이런식으로 된다.
+	-->
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item="type" collection="typeArr">
+		    	<trim prefix="OR">
+		        	<choose>
+		                <when test="type == 'T'.toString()">
+		                    TITLE LIKE '%' || #{keyword} || '%'
+		                </when>
+		                <when test="type == 'C'.toString()">
+		                    CONTENT LIKE '%' || #{keyword} || '%'
+		                </when>
+		                <when test="type == 'W'.toString()">
+		                    WRITER LIKE '%' || #{keyword} || '%'
+		                </when>
+		            </choose>
+		        </trim>
+		    </foreach>
+		</trim>	
+	</sql>
+	
 	<select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
 		<![CDATA[
 			SELECT
@@ -21,7 +57,13 @@
 						ROWNUM AS RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
 					FROM
 						TBL_BOARD
-					WHERE ROWNUM <= #{pageNum} * #{amount}
+					WHERE 
+		]]>
+		
+		<include refid="criteria" />
+				
+		<![CDATA[
+						ROWNUM <= #{pageNum} * #{amount}
 				)
 			WHERE RN > (#{pageNum} - 1) * #{amount}
 		]]>
@@ -33,6 +75,7 @@
 		FROM
 			TBL_BOARD
 		WHERE
+			<include refid="criteria" />
 			BNO > 0
 	</select>
 	

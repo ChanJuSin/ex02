@@ -25,7 +25,6 @@ public class BoardMapperTests {
 	@Setter(onMethod_ = { @Autowired })
 	private BoardMapper mapper; 
 	
-	@Test
 	public void testGetList() {
 		service.getList(new Criteria(2, 10)).forEach(board -> log.info(board));
 	}
@@ -67,6 +66,25 @@ public class BoardMapperTests {
 		cri.setPageNum(3);
 		List<BoardVO> list = mapper.getListWithPaging(cri);
 		list.forEach(board -> log.info(board));
+	}
+	
+	public void testSearch() {
+		Criteria cri = new Criteria();
+		cri.setType("TC");
+		
+		List<BoardVO> list = mapper.getListWithPaging(cri);
+		
+		list.forEach(board -> log.info(board));
+	}
+	
+	@Test
+	public void testSearchCount() {
+		Criteria cri = new Criteria();
+		cri.setType("TC");
+		cri.setKeyword("테스트");
+		
+		int count = mapper.getTotalCount(cri);
+		System.out.println(count);
 	}
 	
 }
