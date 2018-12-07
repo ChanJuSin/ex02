@@ -5,4 +5,42 @@
   
 <mapper namespace="org.zerock.mapper.ReplyMapper">
 
+	<insert id="insert">
+		INSERT INTO TBL_REPLY (RNO, BNO, REPLY, REPLYER)
+		VALUES (SEQ_REPLY.NEXTVAL, #{bno}, #{reply}, #{replyer})
+	</insert>
+	
+	<select id="read" resultType="org.zerock.domain.ReplyVO">
+		SELECT	
+			*
+		FROM
+			TBL_REPLY
+		WHERE
+			RNO = #{rno}
+	</select>
+	
+	<delete id="delete">
+		DELETE FROM TBL_REPLY WHERE RNO = #{rno}
+	</delete>
+	
+	<update id="update">
+		UPDATE 
+			TBL_REPLY 
+		SET
+			REPLY = #{reply},
+			UPDATEDATE = SYSDATE 
+		WHERE
+			RNO = #{rno}
+	</update>
+	
+	<select id="getListWithPaging" resultType="org.zerock.domain.ReplyVO">
+		SELECT
+			RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
+		FROM
+			TBL_REPLY
+		WHERE
+			BNO = #{bno}
+		ORDER BY RNO ASC
+	</select>
+
 </mapper>
