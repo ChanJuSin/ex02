@@ -34,13 +34,34 @@
 	</update>
 	
 	<select id="getListWithPaging" resultType="org.zerock.domain.ReplyVO">
-		SELECT
-			RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
-		FROM
-			TBL_REPLY
-		WHERE
-			BNO = #{bno}
-		ORDER BY RNO ASC
+		<![CDATA[
+			SELECT 
+				RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
+			FROM
+				(
+					SELECT /*+ INDEX(TBL_REPLY IDX_REPLY) */
+						ROWNUM AS RN, RNO, BNO, REPLY, REPLYER, REPLYDATE, UPDATEDATE
+					FROM
+						TBL_REPLY
+					WHERE 
+						BNO = #{bno}
+						AND RNO > 0
+						AND ROWNUM <= #{cri.pageNum} * #{cri.amount}
+				)
+			WHERE
+				RN > (#{cri.pageNum} -1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getCountByBno" resultType="int">
+		<![CDATA[
+			SELECT 
+				COUNT(RNO) 
+			FROM
+				TBL_REPLY
+			WHERE
+				BNO = #{bno}
+		]]>
 	</select>
 
 </mapper>
