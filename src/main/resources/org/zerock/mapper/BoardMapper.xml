@@ -50,11 +50,11 @@
 	<select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
 		<![CDATA[
 			SELECT
-				BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+				BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE, REPLYCNT
 			FROM
 				(
 					SELECT /*+ INDEX_DESC(TBL_BOARD PK_BOARD) */
-						ROWNUM AS RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE
+						ROWNUM AS RN, BNO, TITLE, CONTENT, WRITER, REGDATE, UPDATEDATE, REPLYCNT
 					FROM
 						TBL_BOARD
 					WHERE 
@@ -104,6 +104,12 @@
 	<update id="update">
 		UPDATE TBL_BOARD
 		SET TITLE = #{title}, CONTENT = #{content}, WRITER = #{writer}, UPDATEDATE = sysdate
+		WHERE BNO = #{bno}
+	</update>
+	
+	<update id="updateReplyCnt">
+		UPDATE TBL_BOARD
+		SET REPLYCNT = REPLYCNT + #{amount} 
 		WHERE BNO = #{bno}
 	</update>
 	
