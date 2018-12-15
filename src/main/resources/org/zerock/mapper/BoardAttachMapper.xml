@@ -17,5 +17,9 @@
     <select id="findByBno" resultType="org.zerock.domain.BoardAttachVO">
         SELECT * FROM TBL_ATTACH WHERE BNO = #{bno}
     </select>
+    
+    <delete id="deleteAll">
+    	DELETE FROM TBL_ATTACH WHERE BNO = #{bno}
+    </delete>
 
 </mapper>
