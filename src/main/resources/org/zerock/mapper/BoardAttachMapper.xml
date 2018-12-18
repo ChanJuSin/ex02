@@ -21,5 +21,9 @@
     <delete id="deleteAll">
     	DELETE FROM TBL_ATTACH WHERE BNO = #{bno}
     </delete>
+    
+    <select id="getAllFiles" resultType="org.zerock.domain.BoardAttachVO">
+    	SELECT * FROM TBL_ATTACH WHERE UPLOADPATH = to_char(sysdate - 2, 'yyyy\mm\dd')
+    </select>
 
 </mapper>

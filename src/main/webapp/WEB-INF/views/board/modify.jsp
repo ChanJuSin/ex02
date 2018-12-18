@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>    
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>     
 <style>
 .uploadResult {
 	width: 100%;
@@ -108,8 +109,15 @@
 	            				<input type="hidden" name="type" value="<c:out value='${cri.type }'/>">
 	            				<input type="hidden" name="keyword" value="<c:out value='${cri.keyword }'/>">
 	            				
-	            				<button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
-	            				<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
+	            				<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
+	            				
+	            				<sec:authentication property="principal" var="pinfo" />
+	            				<sec:authorize access="isAuthenticated()">
+	            					<c:if test="${pinfo.username eq board.writer }">
+		            					<button type="submit" data-oper="modify" class="btn btn-default">Modify</button>
+		            					<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
+	            					</c:if>
+	            				</sec:authorize>
 	            				<button type="submit" data-oper="list" class="btn btn-info">List</button>
             				</form>
             			</div>
@@ -279,6 +287,8 @@ $(function() {
 		thumbnailTarget.append(str);
 	}
 	
+	const csrfHeaderName = "${_csrf.headerName}";
+	const cstfTokenValue = "${_csrf.token}";
 	const cloneUploadDiv = $(".uploadDiv").clone();
 	$("body").on("change", "input[type=file]", function(e) {
 		const formData = new FormData();
@@ -294,6 +304,9 @@ $(function() {
 			method: "post",
 			url: "/uploadAjaxAction",
 			data: formData,
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(csrfHeaderName, cstfTokenValue);
+			},
 			processData: false,
 			contentType: false,
 			success: function(result) {

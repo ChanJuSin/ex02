@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,7 @@ public class UploadController {
 		return "hello";
 	}
 
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping(value = "/uploadAjaxAction", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<List<AttachFileDTO>> uploadAjaxAction(MultipartFile[] uploadFile) throws Exception {
 		List<AttachFileDTO> list = new ArrayList<>();
@@ -93,6 +95,7 @@ public class UploadController {
 	 * 	파일 삭제
 	 * 	@params String fileName, String fileType	
 	 */
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/deleteFile")
 	public @ResponseBody ResponseEntity<String> deleteFile(@RequestParam Map<String, String> fileInfo) throws Exception {
 		File thumbNailFile = new File(RelatedFileUtil.UPLOAD_FOLDER, URLDecoder.decode(fileInfo.get("fileName"), "UTF-8"));

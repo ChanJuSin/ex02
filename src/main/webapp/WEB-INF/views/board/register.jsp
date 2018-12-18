@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>    
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>   
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %> 
     
 <%@ include file="../includes/header.jsp" %>
             <div class="row">
@@ -28,8 +29,10 @@
             					
             					<div class="form-group">
             						<label>Writer</label>
-            						<input type="text" class="form-control" name="writer">
+            						<input type="text" class="form-control" name="writer" value="<sec:authentication property='principal.username' />" readonly="readonly">
             					</div>
+            					
+            					<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }">
             					
             					<button type="submit" class="btn btn-default">Submit Button</button>
             					<button type="reset" class="btn btn-default">Reset Button</button>
@@ -113,6 +116,8 @@ $(function() {
 		thumbnailTarget.append(str);
 	}
 	
+	const csrfHeaderName = "${_csrf.headerName}";
+	const csrfTokenValue = "${_csrf.token}";
 	const cloneUploadDiv = $(".uploadDiv").clone();
 	$("body").on("change", "input[type=file]", function(e) {
 		const formData = new FormData();
@@ -128,6 +133,9 @@ $(function() {
 			method: "post",
 			url: "/uploadAjaxAction",
 			data: formData,
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+			},
 			processData: false,
 			contentType: false,
 			success: function(result) {
@@ -166,6 +174,9 @@ $(function() {
 			data: {
 				fileName: targetFile,
 				fileType: type
+			},
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
 			},
 			success: function(result) {
 				targetLi.remove();

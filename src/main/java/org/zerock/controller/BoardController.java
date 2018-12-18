@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,11 +38,13 @@ public class BoardController {
 		model.addAttribute("pageMaker", new PageDTO(cri, total));
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/register") 
 	public void register() {
 		
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) {
 		service.register(board);
@@ -55,6 +58,7 @@ public class BoardController {
 	}
 	
 	// Criteria는 페이징 처리후 3페이지에서 게시물을 조회하고 수정할경우 수정된뒤 다시 3페이지를 보여주기 위해 필요하다.
+	@PreAuthorize("principal.username == #board.writer")
 	@PostMapping("/modify")
 	public String modify(BoardVO board, Criteria cri, RedirectAttributes rttr) {
 		if (service.modify(board)) {
@@ -72,8 +76,9 @@ public class BoardController {
 	}
 
 	// Criteria는 페이징 처리후 3페이지에서 게시물을 조회하고 삭제핧경우 삭제된뒤 다시 3페이지를 보여주기 위해 필요하다.
+	@PreAuthorize("principal.username == #writer")
 	@PostMapping("/remove")
-	public String remove(@RequestParam("bno") Long bno, Criteria cri, RedirectAttributes rttr) {
+	public String remove(@RequestParam("bno") Long bno, Criteria cri, RedirectAttributes rttr, String writer) {
 		List<BoardAttachVO> attachList = service.getAttachList(bno);
 		
 		if (service.remove(bno)) {
